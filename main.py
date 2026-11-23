@@ -59,9 +59,9 @@ def G(b,c):
      M.append((s,q))
      if a in(2,6):break
      q+=o
-   if a==6 and s==(4 if c>0 else 116):
+   if a==6 and s==(4 if c>0 else 116)and not A(b,s,-c):
     for t,h in((6,7),(2,0))if c>0 else((118,119),(114,112)):
-     if b[h]==4*c and all(not b[x]for x in range(min(s,h)+1,max(s,h)))and not any(A(b,x,-c)for x in range(min(s,t),max(s,t)+1)):M.append((s,t))
+     if b[h]==4*c and all(not b[x]for x in range(min(s,h)+1,max(s,h)))and not any(A(b,x,-c)for x in range(min(s,t)+1,max(s,t))):M.append((s,t))
  return M
 def W(b,f,t,c):
  p=b[f];b[8]=(t-16*c)if abs(p)==1 and t-f==32*c else 0;b[f]=0
@@ -89,7 +89,7 @@ def X(b):
  s=0
  for q in SQ:s+=E[b[q]+6][q]
  return s
-NO=0;T=70000
+NO=0;T=90000
 def Q(b,a,z,c,kw,kb,h):
  global NO
  NO+=1
