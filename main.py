@@ -1,10 +1,8 @@
-import json,os,sys,urllib.request,urllib.error
+import json,os,sys,urllib.request
 E=os.environ.get("MAKEFUN_ENV_URL")or sys.exit("MAKEFUN_ENV_URL is not set")
 def P(p,b):
  r=urllib.request.Request(E+p,data=json.dumps(b).encode(),headers={"content-type":"application/json"})
- try:
-  with urllib.request.urlopen(r)as f:return json.load(f)
- except urllib.error.HTTPError as x:sys.exit(str(x.code))
+ with urllib.request.urlopen(r)as f:return json.load(f)
 V=(0,100,320,330,500,900,100000)
 D=(-17,-15,15,17);L=(-16,-1,1,16);K=(-17,-16,-15,-1,1,15,16,17);N=(-33,-31,-18,-14,14,18,31,33);R=(N,D,L,D+L,K)
 class Z(Exception):pass
@@ -50,7 +48,7 @@ def G(b,c):
     if s>>4==(1 if c>0 else 6)and not b[q+f]:M.append((s,q+f))
    for o in(f-1,f+1):
     q=s+o
-    if not q&0x88 and b[q]*c<0:M.append((s,q))
+    if not q&0x88 and(b[q]*c<0 or q==b[8]and b[8]):M.append((s,q))
   else:
    for o in R[a-2]:
     q=s+o
@@ -66,7 +64,7 @@ def G(b,c):
      if b[h]==4*c and all(not b[x]for x in range(min(s,h)+1,max(s,h)))and not any(A(b,x,-c)for x in range(min(s,t),max(s,t)+1)):M.append((s,t))
  return M
 def W(b,f,t,c):
- p=b[f];b[f]=0
+ p=b[f];b[8]=(t-16*c)if abs(p)==1 and t-f==32*c else 0;b[f]=0
  if abs(p)==1 and t!=f and not b[t]:b[t-16*c]=0
  b[t]=p
  if abs(p)==1 and t>>4 in(0,7):b[t]=5*c
