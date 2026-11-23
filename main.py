@@ -14,7 +14,7 @@ def F(f):
    if c.isdigit():s+=int(c)
    else:b[(7-i)*16+s]=(1 if c.isupper()else -1)*" pnbrqk".index(c.lower());s+=1
  return b
-def J(u):return(int(u[0])-97+(ord(u[1])-49)*16,int(u[2])-97+(ord(u[3])-49)*16)
+def J(u):return(ord(u[0])-97+(int(u[1])-1)*16,ord(u[2])-97+(int(u[3])-1)*16)
 def A(b,s,c):
  if s<0:return 1
  for o in(-17,-15)if c>0 else(15,17):
