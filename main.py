@@ -1,7 +1,7 @@
 import json,os,sys,urllib.request
-E=os.environ.get("MAKEFUN_ENV_URL")or sys.exit("MAKEFUN_ENV_URL is not set")
+U=os.environ.get("MAKEFUN_ENV_URL")or sys.exit("MAKEFUN_ENV_URL is not set")
 def P(p,b):
- r=urllib.request.Request(E+p,data=json.dumps(b).encode(),headers={"content-type":"application/json"})
+ r=urllib.request.Request(U+p,data=json.dumps(b).encode(),headers={"content-type":"application/json"})
  with urllib.request.urlopen(r)as f:return json.load(f)
 V=(0,100,320,330,500,900,100000)
 D=(-17,-15,15,17);L=(-16,-1,1,16);K=(-17,-16,-15,-1,1,15,16,17);N=(-33,-31,-18,-14,14,18,31,33);R=(N,D,L,D+L,K)
@@ -150,7 +150,7 @@ def choose(g):
    else:kb=q
  ms=[]
  for u in g["legal_moves"]:
-  f,t=J(u);ms.append((f,t,u))
+  if len(u)<5 or u[4]=="q":f,t=J(u);ms.append((f,t,u))
  global NO
  NO=0
  best=ms[0][2]
