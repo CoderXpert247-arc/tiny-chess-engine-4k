@@ -88,7 +88,7 @@ def X(b):
  s=0
  for q in SQ:s+=E[b[q]+6][q]
  return s
-NO=0;T=90000;Rk={}
+NO=0;T=70000
 def Q(b,a,z,c,kw,kb,h):
  global NO
  NO+=1
@@ -126,10 +126,10 @@ def B(b,d,a,z,c,kw,kb,p):
  return s
 def S(b,d,c,kw,kb,ms):
  a=s=-1000000;best=ms[0][2]
- for f,t,u in sorted(ms,key=lambda x:-Rk.get(x[2],0)):
+ for f,t,u in ms:
   n=b[:];p=n[f];W(n,f,t,c)
   w,x=(kw,kb)if abs(p)>5 else((t,kb)if c>0 else(kw,t))
-  v=-B(n,d-1,-1000000,-a,-c,w,x,1);Rk[u]=v
+  v=-B(n,d-1,-1000000,-a,-c,w,x,1)
   if v>s:s=v;best=u
   if s>a:a=s
  return best
