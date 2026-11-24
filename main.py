@@ -50,14 +50,17 @@ def G(b,c,k=1):
     q=s+o
     if not q&0x88 and(b[q]*c<0 or q==b[8]>0):AP((s,q))
   else:
+   n=a in(2,6)
    for o in R[a-2]:
     q=s+o
+    if n:
+     if not q&0x88 and b[q]*c<k:AP((s,q))
+     continue
     while not q&0x88:
      if b[q]:
       if b[q]*c<0:AP((s,q))
       break
      if k:AP((s,q))
-     if a in(2,6):break
      q+=o
    if a==6 and s==(4 if c>0 else 116):
     for t,h in((6,7),(2,0))if c>0 else((118,119),(114,112)):
@@ -87,7 +90,7 @@ for p in range(-6,7):
   for q in SQ:E[p+6][q]=Y(p,q)
 def X(b):
  return sum([E[b[q]+6][q]for q in SQ])
-NO=0;T=90000
+NO=0;T=120000
 def Q(b,a,z,c,kw,kb,h):
  global NO
  NO+=1
@@ -97,7 +100,8 @@ def Q(b,a,z,c,kw,kb,h):
  if s>a:a=s
  if h>4:return a
  m=G(b,c,0)
- for f,t in sorted(m,key=lambda x:-abs(b[x[1]])):
+ m.sort(key=lambda x:b[x[1]]*c)
+ for f,t in m:
   n=b[:];p=n[f];W(n,f,t,c)
   w,x=(kw,kb)if abs(p)!=6 else((t,kb)if c>0 else(kw,t))
   v=-Q(n,-z,-a,-c,w,x,h+1)
@@ -114,7 +118,8 @@ def B(b,d,a,z,c,kw,kb):
  if d<1:return Q(b,a,z,c,kw,kb,0)
  if d>3 and X(b)*c>=z and not A(b,k,-c)and-B(b,d-3,-z,-z+1,-c,kw,kb)>=z:return z
  s=-1000000
- for i,(f,t) in enumerate(sorted(m,key=lambda x:-abs(b[x[1]]))):
+ m.sort(key=lambda x:b[x[1]]*c)
+ for i,(f,t) in enumerate(m):
   n=b[:];p=n[f];W(n,f,t,c)
   w,x=(kw,kb)if abs(p)!=6 else((t,kb)if c>0 else(kw,t))
   v=-B(n,d-1-(i>3 and not b[t]and d>2),-z,-a,-c,w,x)
@@ -122,12 +127,12 @@ def B(b,d,a,z,c,kw,kb):
   if s>a:a=s
   if a>=z:break
  return s
-def S(b,d,c,kw,kb,ms,L):
+def S(b,d,c,kw,kb,ms):
  a=s=-1000000;best=ms[0][2]
  for f,t,u in ms:
   n=b[:];p=n[f];W(n,f,t,c)
   w,x=(kw,kb)if abs(p)!=6 else((t,kb)if c>0 else(kw,t))
-  v=-B(n,d-1,-1000000,-a,-c,w,x)if L.count((tuple(n),-c))<2 else 0
+  v=-B(n,d-1,-1000000,-a,-c,w,x)
   if v>s:s=v;best=u
   if s>a:a=s
  return best
@@ -138,13 +143,11 @@ def choose(g):
   if b[q]==6:kw=q
   if b[q]==-6:kb=q
  ms=[J(u)+(u,)for u in g["legal_moves"]if len(u)<5 or u[4]=="q"]
- L=[];x=F(g["start_fen"]);s=1
- for u in g["moves"]:W(x,*J(u),s);s=-s;L.append((tuple(x),s))
  global NO
  NO=0
  best=ms[0][2]
  for d in range(1,60):
-  try:best=S(b,d,c,kw,kb,ms,L)
+  try:best=S(b,d,c,kw,kb,ms)
   except Z:break
  return best
 while 1:
