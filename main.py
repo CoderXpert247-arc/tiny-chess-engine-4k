@@ -15,18 +15,16 @@ def F(f):
    if c.isdigit():s+=int(c)
    else:b[(7-i)*16+s]=((c<"a")*2-1)*" pnbrqk".index(c.lower());s+=1
  return b
-def J(u):return(ord(u[0])-97+(int(u[1])-1)*16,ord(u[2])-97+(int(u[3])-1)*16)
+def J(u):return ord(u[0])-97+(int(u[1])-1)*16,ord(u[2])-97+(int(u[3])-1)*16
 def A(b,s,c):
  if s<0:return 1
- for o in(-17,-15)if c>0 else(15,17):
+ for o in(D[:2]if c>0 else D[2:]):
   q=s+o
   if not q&0x88 and b[q]==c:return 1
- for o in N:
-  q=s+o
-  if not q&0x88 and b[q]==2*c:return 1
- for o in K:
-  q=s+o
-  if not q&0x88 and b[q]==6*c:return 1
+ for O,v in(N,2),(K,6):
+  for o in O:
+   q=s+o
+   if not q&0x88 and b[q]==v*c:return 1
  for O,T in((D,(3,5)),(L,(4,5))):
   for o in O:
    q=s+o
@@ -63,7 +61,7 @@ def G(b,c,k=1):
      q+=o
    if a==6 and s==(4 if c>0 else 116):
     for t,h in((6,7),(2,0))if c>0 else((118,119),(114,112)):
-     if k and b[h]==4*c and all(not b[x]for x in range(min(s,h)+1,max(s,h)))and not A(b,s,-c)and not any(A(b,x,-c)for x in range(min(s,t)+1,max(s,t))):AP((s,t))
+     if k and b[h]==4*c and not any(b[x]for x in range(min(s,h)+1,max(s,h)))and not A(b,s,-c)and not any(A(b,x,-c)for x in range(min(s,t)+1,max(s,t))):AP((s,t))
  return M
 def W(b,f,t,c):
  p=b[f];b[8]=(t-16*c)if abs(p)==1 and t-f==32*c else 0;b[f]=0
@@ -88,10 +86,8 @@ for p in range(-6,7):
  if p:
   for q in SQ:E[p+6][q]=Y(p,q)
 def X(b):
- s=0
- for q in SQ:s+=E[b[q]+6][q]
- return s
-NO=0;T=70000
+ return sum([E[b[q]+6][q]for q in SQ])
+NO=0;T=90000
 def Q(b,a,z,c,kw,kb,h):
  global NO
  NO+=1
@@ -103,10 +99,7 @@ def Q(b,a,z,c,kw,kb,h):
  m=G(b,c,0)
  for f,t in sorted(m,key=lambda x:-abs(b[x[1]])):
   n=b[:];p=n[f];W(n,f,t,c)
-  w,x=kw,kb
-  if abs(p)==6:
-   if c>0:w=t
-   else:x=t
+  w,x=(kw,kb)if abs(p)!=6 else((t,kb)if c>0 else(kw,t))
   v=-Q(n,-z,-a,-c,w,x,h+1)
   if v>=z:return v
   if v>a:a=v
@@ -115,49 +108,43 @@ def B(b,d,a,z,c,kw,kb):
  global NO
  NO+=1
  if NO>T:raise Z
+ k=kw if c>0 else kb
  m=G(b,c)
- if not m:return A(b,kw if c>0 else kb,-c)*-100000
+ if not m:return A(b,k,-c)*-100000
  if d<1:return Q(b,a,z,c,kw,kb,0)
- if d>3 and X(b)*c>=z and not A(b,kw if c>0 else kb,-c)and-B(b,d-3,-z,-z+1,-c,kw,kb)>=z:return z
+ if d>3 and X(b)*c>=z and not A(b,k,-c)and-B(b,d-3,-z,-z+1,-c,kw,kb)>=z:return z
  s=-1000000
  for i,(f,t) in enumerate(sorted(m,key=lambda x:-abs(b[x[1]]))):
   n=b[:];p=n[f];W(n,f,t,c)
-  w,x=kw,kb
-  if abs(p)==6:
-   if c>0:w=t
-   else:x=t
+  w,x=(kw,kb)if abs(p)!=6 else((t,kb)if c>0 else(kw,t))
   v=-B(n,d-1-(i>3 and not b[t]and d>2),-z,-a,-c,w,x)
   if v>s:s=v
   if s>a:a=s
   if a>=z:break
  return s
-def S(b,d,c,kw,kb,ms):
+def S(b,d,c,kw,kb,ms,L):
  a=s=-1000000;best=ms[0][2]
  for f,t,u in ms:
   n=b[:];p=n[f];W(n,f,t,c)
-  w,x=kw,kb
-  if abs(p)==6:
-   if c>0:w=t
-   else:x=t
-  v=-B(n,d-1,-1000000,-a,-c,w,x)
+  w,x=(kw,kb)if abs(p)!=6 else((t,kb)if c>0 else(kw,t))
+  v=-B(n,d-1,-1000000,-a,-c,w,x)if L.count((tuple(n),-c))<2 else 0
   if v>s:s=v;best=u
   if s>a:a=s
  return best
 def choose(g):
- gc.collect()
  b=F(g["fen"]);c=1 if g["colour"]=="white"else-1
  kw=kb=-1
  for q in SQ:
   if b[q]==6:kw=q
   if b[q]==-6:kb=q
- ms=[]
- for u in g["legal_moves"]:
-  if len(u)<5 or u[4]=="q":f,t=J(u);ms.append((f,t,u))
+ ms=[J(u)+(u,)for u in g["legal_moves"]if len(u)<5 or u[4]=="q"]
+ L=[];x=F(g["start_fen"]);s=1
+ for u in g["moves"]:W(x,*J(u),s);s=-s;L.append((tuple(x),s))
  global NO
  NO=0
  best=ms[0][2]
  for d in range(1,60):
-  try:best=S(b,d,c,kw,kb,ms)
+  try:best=S(b,d,c,kw,kb,ms,L)
   except Z:break
  return best
 while 1:
